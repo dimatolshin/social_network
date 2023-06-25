@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+     {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-success">
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    {% if form.error %}
+      <h3>Incorrect data </h3>
+    {% endif %}
+
+    <form action="{% url 'network:register' %}" method="POST">
+        {{form.as_p}}
+        {% csrf_token %}
+        <input type="submit" value="Register">
+    </form>
+
+</body>
+</html>

@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-u4ub$4ksz8o1v9tq6=u21!h4a-3gq8wv@#k+u3gzrq2crlryx6
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -81,9 +79,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'django',
+        'NAME': 'django_network',
+        'USER': 'django_network',
+        'PASSWORD': 'django_network',
         'HOST': 'localhost',
         'PORT': 5432,
     }
@@ -145,3 +143,5 @@ RQ_QUEUES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ATOMIC_REQUESTS = True
+
+

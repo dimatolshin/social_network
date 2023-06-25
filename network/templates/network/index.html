@@ -5,6 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-        hi wolrd
+      {% if user.is_authenticated %}
+           <form action="{% url 'logout' %}?next={{request.path}}" method="post">
+               {% csrf_token %}
+                <input type="submit" value="Logout &#10156;" class="btn btn-danger">
+           </form>
+          <a href="{% url 'network:main' user.profile.id %}">log in profile</a>
+      {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'network:register' %}">Register</a>
+      {% endif %}
+
 </body>
 </html>

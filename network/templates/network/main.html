@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Профиль:</h1>
+    <li>{{profile.user.username}}</li>
+    <li>{{profile.user.first_name}}</li>
+    <li>{{profile.user.last_name}}</li>
+    <li>{{user.email}}</li>
+    {% load static %}
+    <li><img src="{% static '{{profile.photo}}' %}"></li>
+    <li>{{profile.birth_date}}</li>
+    <h1>Друзья:</h1>
+        {% for subscriber in subscribers %}
+        <li>
+            <a href="{% url 'network:main' subscriber.subscriber.user.id  %}">{{subscriber.subscriber.user.username}}</a>
+        </li>
+        {% endfor %}
+
+    <h1>Подписчики:</h1>
+        {% for to_subscriber in to_subscribers %}
+        <li>
+            <a href="{% url 'network:main' to_subscriber.to_subscriber.user.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
+        </li>
+        {% endfor %}
+
+</body>
+</html>
