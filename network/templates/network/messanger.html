@@ -5,10 +5,15 @@
     <title>Title</title>
 </head>
 <body>
-      {% if all_rooms %}
-          {% for room in all_rooms %}
+      {% if friend_rooms or my_rooms %}
+          {% for room in my_rooms %}
             <li>
-              {{room.name}}
+              <a href="{% url 'network:message_room' room.id %}"> {{room.friend.user.username}}</a>
+            </li>
+          {% endfor %}
+          {% for room in friend_rooms %}
+            <li>
+              <a href="{% url 'network:message_room' room.id %}"> {{room.you.user.username}}</a>
             </li>
           {% endfor %}
         {% else %}

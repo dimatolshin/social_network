@@ -16,16 +16,25 @@
     <li><img src="{% static profile.photo %}"></li>
     <li>{{profile.birth_date}}</li>
             {% if check_element %}
+                {% if not subscriber %}
         <form action="{% url 'network:add_friend' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="Добавить в друзья" >
             <input type="hidden" value="{{profile.id}}" name="profile_id">
         </form>
-        <form action="{% url 'network:add_chat' %}" method="post">
+                 {% else %}
+            <form action="{% url 'network:dell_friend' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Удалить друга">
+                <input type="hidden" value="{{profile.id}}" name="profile_id">
+            </form>
+                 {% endif %}
+        <form action="{% url 'network:check_chat' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="Написать сообщение">
             <input type="hidden" value="{{profile.id}}" name="profile_id">
         </form>
+
             {% endif %}
         <a href="{% url 'network:messanger' %}">Messanger</a>
     <h1>Друзья:</h1>

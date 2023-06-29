@@ -33,32 +33,63 @@ def main(request: HttpRequest, user_id: int):
         check_element = False
     else:
         check_element = True
-    # TODO Subscription.objects (если есть друг то кнока удалить )
+    subscriber = Subscription.objects.filter(to_subscriber=request.user.profile, subscriber=profile)
+    if subscriber:
+        subscriber = True
+    # TOD Subscription.objects (если есть друг то кнока удалить )
     return render(request, 'network/main.html',
                   {'profile': profile, 'subscribers': subscribers, 'to_subscribers': to_subscribers,
-                   'check_element': check_element})
+                   'check_element': check_element, 'subscriber': subscriber})
 
 
 def add_friend(request):
-    profile_id = request.POST['profile_id']
+    profile_id = request.POST.get('profile_id')
     profile = get_object_or_404(Profile, id=profile_id)
-    Subscription.objects.create(to_subscriber=request.user.profile, subscriber=profile)
+    subscriber = Subscription.objects.filter(to_subscriber=request.user.profile, subscriber=profile)
+    if not subscriber:
+        Subscription.objects.create(to_subscriber=request.user.profile, subscriber=profile)
+    else:
+        return redirect('network:main', profile_id)
     return redirect('network:main', profile_id)
 
 
-def add_chat(request):
-    profile_id = request.POST['profile_id']
+def check_chat(request):
+    profile_id = request.POST.get('profile_id')
     profile = get_object_or_404(Profile, id=profile_id)
-    chat = request.user.profile.rooms.filter(name=profile.user.username)
-    if not chat:
-        chat = request.user.profile.rooms.create(profile=profile, name=profile.user.username)
-    return redirect('network:messanger') #TODO redirect ('massage_room' ,chat.id)
+    chats = Chat.objects.filter(you=request.user.profile, friend=profile)
+    if not chats:
+        chats = Chat.objects.filter(friend=request.user.profile, you=profile)
+    if not chats:
+        chats = Chat.objects.create(you=request.user.profile, friend=profile)
+    for chat in chats:
+        chat_id = chat.id
+    return redirect('network:message_room', chat_id)
 
 
 def messanger(request):
-    all_rooms = request.user.profile.rooms.all()
-    return render(request, 'network/messanger.html', {'all_rooms': all_rooms})
+    friend_rooms = Chat.objects.filter(friend=request.user.profile)
+    my_rooms = Chat.objects.filter(you=request.user.profile)
+    return render(request, 'network/messanger.html', {'my_rooms': my_rooms, 'friend_rooms': friend_rooms})
 
 
-def message_room(request,chat_id):
-    pass
+def message_room(request, chat_id: int):
+    chat = get_object_or_404(Chat, id=chat_id)
+    messages = Message.objects.filter(chat=chat)
+    return render(request, 'network/my_messages.html', {'messages': messages, 'chat': chat})
+
+
+def add_message(request):
+    text = request.POST['text']
+    chat_id = request.POST['chat_id']
+    chat = get_object_or_404(Chat, id=chat_id)
+    Message.objects.create(text=text, chat=chat, author=request.user.profile)
+    return redirect('network:message_room', chat_id)
+
+
+def dell_friend(request):
+    profile_id = request.POST.get('profile_id')
+    profile = get_object_or_404(Profile, id=profile_id)
+    subscriber = Subscription.objects.filter(to_subscriber=request.user.profile, subscriber=profile)
+    subscriber.delete()
+    request.user.profile.save()
+    return redirect('network:main', profile_id)

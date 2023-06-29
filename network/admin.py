@@ -17,6 +17,10 @@ class ToSubscriberInline(admin.TabularInline):
     fk_name = "to_subscriber"
 
 
+class MessageAutorInline(admin.TabularInline):
+    extra = 1
+    model = Message
+    fk_name = 'author'
 
 
 class MessageInline(admin.TabularInline):
@@ -24,12 +28,21 @@ class MessageInline(admin.TabularInline):
     model = Message
 
 
+class ChatYouInline(admin.TabularInline):
+    extra = 0
+    model = Chat
+    fk_name = 'you'
+
+
+class ChatFriendInline(admin.TabularInline):
+    extra = 0
+    model = Chat
+    fk_name = 'friend'
+
 
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
-
-
 
 
 admin.site.unregister(User)
@@ -42,7 +55,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    inlines = [SubscriberInline, ToSubscriberInline]
+    inlines = [SubscriberInline, ToSubscriberInline, MessageAutorInline, ChatYouInline, ChatFriendInline]
 
 
 @admin.register(Subscription)
