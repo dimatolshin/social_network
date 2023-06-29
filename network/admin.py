@@ -24,9 +24,12 @@ class MessageInline(admin.TabularInline):
     model = Message
 
 
+
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
+
+
 
 
 admin.site.unregister(User)

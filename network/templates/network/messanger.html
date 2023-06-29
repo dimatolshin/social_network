@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+      {% if all_rooms %}
+          {% for room in all_rooms %}
+            <li>
+              {{room.name}}
+            </li>
+          {% endfor %}
+        {% else %}
+        <h1> Здесь нет сообщений! </h1>
+      {% endif %}
+</body>
+</html>
