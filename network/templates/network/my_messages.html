@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+      {% if  messages %}
+        {% for message in messages %}
+            <h1>{{message.author.user.username}}:{{message.text}}</h1>
+            <li>{{message.date}}</li>
+
+        {% endfor %}
+
+
+      {% else %}
+            <h1> Нет Сообщений </h1>
+      {% endif %}
+         <form action="{% url 'network:add_message' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="text" placeholder="Написать сообщение" >
+            <input type="submit" value="Отправить">
+            <input type="hidden" name="chat_id" value="{{chat.id}}">
+        </form>
+
+</body>
+</html>

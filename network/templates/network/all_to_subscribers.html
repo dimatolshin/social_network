@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if not to_subscribers %}
+        <h1>У вас нет подписчиков </h1>
+    {% else %}
+        <form action="{% url 'network:search_to_subscribers' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="name_to_subscriber" placeholder="Поиск друга(username)">
+            <input type="submit" value="Поиск">
+            <input type="hidden" name="profile_id" value="{{profile.id}}">
+        </form>
+        {% for to_subscriber in to_subscribers %}
+            <li>
+                <a href="{% url 'network:main' to_subscriber.to_subscriber.id %}"> {{to_subscriber.to_subscriber.user.username}}</a>
+            </li>
+        {% endfor %}
+    {% endif %}
+
+</body>
+</html>

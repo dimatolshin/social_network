@@ -3,13 +3,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
 
-from .models import Profile
+from .models import Profile, Photo
 
 User = get_user_model()
 
 
 class CreateNewUser(UserCreationForm):
-    birth_date = forms.DateField(initial=timezone.now().date(), widget=forms.SelectDateWidget(years=range(1900,2030)))
+    birth_date = forms.DateField(initial=timezone.now().date(), widget=forms.SelectDateWidget(years=range(1900, 2030)))
     email = forms.EmailField()
 
     class Meta:
@@ -28,3 +28,8 @@ class CreateNewUser(UserCreationForm):
             Profile.objects.create(user=user)
         return user
 
+
+class AddPhoto(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ("picture",)

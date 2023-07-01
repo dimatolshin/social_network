@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import Profile, Subscription, Chat, Message
+from .models import Profile, Subscription, Chat, Message, Post, Photo
 
 
 class SubscriberInline(admin.TabularInline):
@@ -28,21 +28,19 @@ class MessageInline(admin.TabularInline):
     model = Message
 
 
-class ChatYouInline(admin.TabularInline):
-    extra = 0
-    model = Chat
-    fk_name = 'you'
-
-
-class ChatFriendInline(admin.TabularInline):
-    extra = 0
-    model = Chat
-    fk_name = 'friend'
+class PostInline(admin.TabularInline):
+    model = Post
+    extra = 1
 
 
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
+
+
+class PhotoInline(admin.TabularInline):
+    model = Photo
+    extra = 1
 
 
 admin.site.unregister(User)
@@ -55,7 +53,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    inlines = [SubscriberInline, ToSubscriberInline, MessageAutorInline, ChatYouInline, ChatFriendInline]
+    inlines = [SubscriberInline, ToSubscriberInline, PostInline, PhotoInline]
 
 
 @admin.register(Subscription)
@@ -70,4 +68,14 @@ class ChatAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
     pass

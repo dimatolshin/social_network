@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>Title</title>
 </head>
 <body>  {% if user.is_authenticated %}
     <h1>Профиль:</h1>
+    <a href="{% url 'network:all_photo' profile.id %}"> <img src="{{ profile.photo.url }}"   class="img-circle"  width="150" height="150"></a>
     <li>{{profile.user.username}}</li>
     <li>{{profile.user.first_name}}</li>
     <li>{{profile.user.last_name}}</li>
     <li>{{user.email}}</li>
-    {% load static %}
-    {{profile.photo}}
-    {% static profile.photo %}
-    <li><img src="{% static profile.photo %}"></li>
     <li>{{profile.birth_date}}</li>
             {% if check_element %}
                 {% if not subscriber %}
@@ -34,21 +35,32 @@
             <input type="submit" value="Написать сообщение">
             <input type="hidden" value="{{profile.id}}" name="profile_id">
         </form>
-
+            {% else %}
+                <form action="{% url 'network:add_post' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="post_text" placeholder="Написать пост">
+                    <input type="submit" value="Опубликовать">
+                    <input type="hidden" name="profile_id" value="{{profile.id}}">
+                </form>
             {% endif %}
+                {% for post in posts %}
+                    <li>
+                    {{post.text}}-{{post.data}}
+                    </li>
+                {% endfor %}
         <a href="{% url 'network:messanger' %}">Messanger</a>
-    <h1>Друзья:</h1>
+        <a href="{% url 'network:all_subscribers' profile.id %}"><h1>Друзья:</h1></a>
         {% for subscriber in subscribers %}
         <li>
             <a href="{% url 'network:main' subscriber.subscriber.user.id  %}">{{subscriber.subscriber.user.username}}</a>
         </li>
         {% endfor %}
 
-    <h1>Подписчики:</h1>
-        {% for to_subscriber in to_subscribers %}
-        <li>
-            <a href="{% url 'network:main' to_subscriber.to_subscriber.user.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
-        </li>
+        <a href="{% url 'network:all_to_subscribers' profile.id %}"><h1>Подписчики:</h1></a>
+            {% for to_subscriber in to_subscribers %}
+            <li>
+                <a href="{% url 'network:main' to_subscriber.to_subscriber.user.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
+            </li>
         {% endfor %}
         {% endif %}
 </body>

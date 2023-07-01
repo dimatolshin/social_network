@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if not search_element %}
+        <h1> Нет друзей с таким 'username'</h1>
+    {% else %}
+         <h1>Вот что мне удалось найти по вашему запросу</h1>
+        {%for i in search_element %}
+            <li>
+            <a href="{% url 'network:main' i.profile.id %}">{{i.username}}</a>
+            </li>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

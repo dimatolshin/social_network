@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="{% url 'network:add_photo'%}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="appy">
+        <input type="hidden" value="{{photo.profile.id}}" name="profile_id">
+    </form>
+    {% for photo in photos %}
+        <img src="{{photo.picture.url}}" width="1291" height="948" >
+    {% endfor %}
+</body>
+</html>
