@@ -5,14 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="{% url 'network:add_photo'%}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="appy">
-        <input type="hidden" value="{{photo.profile.id}}" name="profile_id">
-    </form>
     {% for photo in photos %}
-        <img src="{{photo.picture.url}}" width="1291" height="948" >
+    <a href="{% url 'network:detail_photo' photo.id %}"><img src="{{photo.picture.url}}" width="400" height="400" ></a>
+
+        Нравиться:{{photo.like}}
     {% endfor %}
 </body>
 </html>

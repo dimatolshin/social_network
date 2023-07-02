@@ -10,7 +10,7 @@
                {% csrf_token %}
                 <input type="submit" value="Logout &#10156;" class="btn btn-danger">
            </form>
-          <a href="{% url 'network:main' user.profile.id %}">log in profile</a>
+          <a href="{% url 'network:main' user.profile.id %}">Войти в профель</a>
       {% else %}
             <a href="{% url 'login' %}">Login</a>
             <a href="{% url 'network:register' %}">Register</a>

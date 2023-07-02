@@ -9,8 +9,12 @@
     <title>Title</title>
 </head>
 <body>  {% if user.is_authenticated %}
+    <a href="{% url 'network:search_people' %}">Найти друзей</a>
     <h1>Профиль:</h1>
     <a href="{% url 'network:all_photo' profile.id %}"> <img src="{{ profile.photo.url }}"   class="img-circle"  width="150" height="150"></a>
+    {% if not check_element %}
+    <a  href="{% url 'network:add_photo' %}" > Добавить фото</a>
+    {% endif %}
     <li>{{profile.user.username}}</li>
     <li>{{profile.user.first_name}}</li>
     <li>{{profile.user.last_name}}</li>
@@ -52,14 +56,14 @@
         <a href="{% url 'network:all_subscribers' profile.id %}"><h1>Друзья:</h1></a>
         {% for subscriber in subscribers %}
         <li>
-            <a href="{% url 'network:main' subscriber.subscriber.user.id  %}">{{subscriber.subscriber.user.username}}</a>
+            <a href="{% url 'network:main' subscriber.subscriber.id  %}">{{subscriber.subscriber.user.username}}</a>
         </li>
         {% endfor %}
 
         <a href="{% url 'network:all_to_subscribers' profile.id %}"><h1>Подписчики:</h1></a>
             {% for to_subscriber in to_subscribers %}
             <li>
-                <a href="{% url 'network:main' to_subscriber.to_subscriber.user.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
+                <a href="{% url 'network:main' to_subscriber.to_subscriber.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
             </li>
         {% endfor %}
         {% endif %}

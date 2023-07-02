@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        {% if not all_people %}
+        <h1> Ничего не удалось найти по вашему запросу </h1>
+         <form action="{% url 'network:search' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="name_element">
+            <input type="submit" value="Искать">
+        </form>
+        {% else %}
+        <form action="{% url 'network:search' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="name_element">
+            <input type="submit" value="Искать">
+        </form>
+        {% for people in all_people %}
+        <a href="{% url 'network:main' people.id %}"><h3>{{people.user.username}}</h3>
+            <img src="{{people.photo.url}}" width="150" height="150" class="img-circle"></a>
+        {% endfor %}
+        {% endif %}
+</body>
+</html>
