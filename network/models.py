@@ -50,7 +50,7 @@ class Post(models.Model):
 
 class Photo(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='photos')
-    picture = models.ImageField(upload_to='photo')
+    picture = models.ImageField(upload_to='photos')
     like = models.IntegerField(default=0)
 
     def __str__(self):
@@ -58,18 +58,20 @@ class Photo(models.Model):
 
 
 class Comment(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comment')
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='comment')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
+    like = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.profile.user.username}:{self.text}'
 
 
 class Support(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='support',blank=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='support', blank=True)
     user_support = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support')
-    text = models.TextField(blank=True)
+    text = models.TextField()
+    creation_user_username = models.CharField(max_length=100,blank=True)
 
     def __str__(self):
         return f'{self.user_support.username} : {self.profile.user.username}'

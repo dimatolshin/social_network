@@ -11,7 +11,8 @@
          <h1>Вот что мне удалось найти по вашему запросу</h1>
         {%for i in search_element %}
             <li>
-            <a href="{% url 'network:main' i.profile.id %}">{{i.username}}</a>
+            <a href="{% url 'network:main' i.profile.id %}"><img src="{{i.profile.photo.url}}" width="90" height="90">
+                {{i.username}}</a>
             </li>
         {% endfor %}
     {% endif %}

@@ -5,17 +5,27 @@
     <title>Title</title>
 </head>
 <body>
-        {% for comment in comments %}
-         <img src="{{comment.photo.url}}" width="400" height="400" >
-        {% endfor %}
-         <form action="{% url 'network:add_comment' comment.profile.id %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="comment_text">
-            <input hidden="hidden" name="photo_id" value="{{comment.photo.id}}">
-        </form>
-        <h1> Комментарии:</h1>
-        {% for comment in comments %}
-            {{comment.profile.user.username}}:{{comment.text}}
-        {% endfor %}
-</body>
+         <img src="{{photo.picture.url}}" width="450" height="450" >
+            {% if not comments %}
+                <h1> Ещё нет комментарий, напишите, будьте первым </h1>
+                 <form action="{% url 'network:add_comment'%}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="comment_text" placeholder="Напишите комментраий">
+                     <input type="submit" value="Отправить" >
+                    <input hidden="hidden" name="photo_id" value="{{photo.id}}">
+                 </form>
+            {% else %}
+                <h1> Комментарии:</h1>
+                <form action="{% url 'network:add_comment' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="comment_text" placeholder="Напишите комментраий">
+                     <input type="submit" value="Отправить" >
+                    <input type="hidden" name="photo_id" value="{{photo.id}}">
+                </form>
+                {% for comment in comments %}
+                <li>
+                    {{comment.profile.user.username}}:{{comment.text}}
+                </li>
+                {% endfor %}
+</body>     {% endif %}
 </html>

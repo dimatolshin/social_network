@@ -16,7 +16,8 @@
         </form>
         {% for subscriber in subscribers %}
         <li>
-          <a href="{% url 'network:main' subscriber.subscriber.id %}"> {{subscriber.subscriber.user.username}}</a>
+          <a href="{% url 'network:main' subscriber.subscriber.id %}"><img src="{{subscriber.subscriber.photo.url}}" width="90" height="90" >
+           {{subscriber.subscriber.user.username}}</a>
         </li>
         {% endfor %}
     {% endif %}

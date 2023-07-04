@@ -5,10 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-    {% for photo in photos %}
-    <a href="{% url 'network:detail_photo' photo.id %}"><img src="{{photo.picture.url}}" width="400" height="400" ></a>
-
-        Нравиться:{{photo.like}}
-    {% endfor %}
+    {% if not photos %}
+        <h1>В альбоме еще нет фотографий</h1>
+    {% else %}
+        <h1>Альбом</h1>
+        {% for photo in photos %}
+        <a href="{% url 'network:detail_photo' photo.id %}"><img src="{{photo.picture.url}}" width="450" height="450" ></a>
+        {% endfor %}
+    {% endif %}
 </body>
 </html>

@@ -10,6 +10,7 @@
 </head>
 <body>  {% if user.is_authenticated %}
     <a href="{% url 'network:search_people' %}">Найти друзей</a>
+    <a href="{% url 'network:support' %}">Связь с техподдержкой</a>
     <h1>Профиль:</h1>
     <a href="{% url 'network:all_photo' profile.id %}"> <img src="{{ profile.photo.url }}"   class="img-circle"  width="150" height="150"></a>
     {% if not check_element %}

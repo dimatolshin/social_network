@@ -24,4 +24,7 @@ urlpatterns = [
     path('detail_photo/<int:photo_id>/', views.detail_photo, name='detail_photo'),
     path('search_people/', views.search_people, name='search_people'),
     path('search/', views.search, name='search'),
+    path('add_comment/', views.add_comment, name='add_comment'),
+    path('support/', views.support, name='support'),
+    path('add_report/', views.add_report, name='add_report'),
 ]

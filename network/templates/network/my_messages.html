@@ -7,8 +7,8 @@
 <body>
       {% if  messages %}
         {% for message in messages %}
-            <h1>{{message.author.user.username}}:{{message.text}}</h1>
-            <li>{{message.date}}</li>
+            <h1><img src="{{message.author.photo.url}}" width="70" height="70">:{{message.text}}</h1>
+            {{message.date}}
 
         {% endfor %}
 

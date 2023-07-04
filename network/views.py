@@ -97,7 +97,7 @@ def search(request):
     username = request.POST['name_element']
     if not username:
         return redirect('network:search_people')
-    all_people=[]
+    all_people = []
     user_container = User.objects.filter(username__icontains=username)
     for user in user_container:
         for profile in profiles:
@@ -183,7 +183,6 @@ def add_photo(request):
         form = AddPhoto(request.POST, request.FILES)
         if form.is_valid():
             request.user.profile.photo = form.cleaned_data['picture']
-            print(form.cleaned_data['picture'])
             Photo.objects.create(profile=request.user.profile, picture=form.cleaned_data['picture'])
             request.user.profile.save()
             return redirect('network:main', request.user.profile.id)
@@ -192,17 +191,35 @@ def add_photo(request):
 
 
 def detail_photo(request, photo_id: int):
-    photo = Photo.objects.filter(id=photo_id)
+    photo = get_object_or_404(Photo, id=photo_id)
     comments = Comment.objects.filter(photo=photo)
-    return render(request, 'network/detail_photo.html', {'comments': comments})
+    return render(request, 'network/detail_photo.html', {'comments': comments, 'photo': photo})
 
-# def add_comment(request, profile_id: int): TODO
-#     if request.method == 'POST':
-#         profile = get_object_or_404(Profile, id=profile_id)
-#         text = request.POST['comment_text']
-#         if not text:
-#             return redirect('network:add_comment', profile_id)
-#         photo = get_object_or_404(Photo, id=request.POST['photo_id'])
-#         comment = Comment.objects.create(text=text, profile=profile, photo=photo)
-#     comments = Comment.objects.filter(photo=photo)
-#     return render(request, 'network/add_comment.html', {'comments': comments})
+
+def add_comment(request):
+    if request.method == 'POST':
+        text = request.POST['comment_text']
+        if not text:
+            return redirect('network:detail_photo', request.POST['photo_id'])
+        photo = get_object_or_404(Photo, id=request.POST['photo_id'])
+        Comment.objects.create(text=text, profile=request.user.profile, photo=photo)
+    comments = Comment.objects.filter(photo=photo)
+    return render(request, 'network/detail_photo.html', {'comments': comments, 'photo': photo})
+
+
+def support(request):
+    user_support = User.objects.get(username='Тех.Специалист')
+    if not Support.objects.filter(profile=request.user.profile):
+        supports = Support.objects.create(profile=request.user.profile, user_support=user_support,
+                                          text='Здравствуйте, чем могу помочь?',creation_user_username='Тех.Специалист')
+    supports = Support.objects.filter(profile=request.user.profile)
+    return render(request, 'network/support.html', {'supports': supports})
+
+
+def add_report(request):
+    user_support = User.objects.get(username='Тех.Специалист')
+    text = request.POST['text']
+    if not text:
+        return redirect('network:support')
+    Support.objects.create(profile=request.user.profile, text=text, user_support=user_support,creation_user_username=request.user.username)
+    return redirect('network:support')
