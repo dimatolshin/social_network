@@ -7,7 +7,7 @@
 <body>
         {% for i in supports %}
             {% if not i.profile.user.username == i.creation_user_username %}
-            <h1>{{i.user_support.username}}:{{i.text}}</h1>
+            <h1>Техническая поддержка:{{i.text}}</h1>
             {% else %}
                 <h1>{{ i.profile.user.username }}:{{i.text}}</h1>
             {% endif %}

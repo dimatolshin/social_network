@@ -68,8 +68,8 @@ class Comment(models.Model):
 
 
 class Support(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='support', blank=True)
-    user_support = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='support')
+    user_support = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support',blank=True)
     text = models.TextField()
     creation_user_username = models.CharField(max_length=100,blank=True)
 
