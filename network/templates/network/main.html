@@ -9,6 +9,7 @@
     <title>Title</title>
 </head>
 <body>  {% if user.is_authenticated %}
+    <a href="{% url 'network:edit_information' %}">Редактировать информацию</a>
     <a href="{% url 'network:search_people' %}">Найти друзей</a>
     <a href="{% url 'network:support' %}">Связь с техподдержкой</a>
     <h1>Профиль:</h1>
@@ -52,8 +53,14 @@
                     <li>
                     {{post.text}}-{{post.data}}
                     </li>
+                    <form action="{% url 'network:add_like_post' %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Нравится" > : {{post.like}}
+                        <input type="hidden" value="{{post.id}}" name="post_id">
+                    </form>
                 {% endfor %}
-        <a href="{% url 'network:messanger' %}">Messanger</a>
+        <a href="{% url 'network:messanger' %}">Мои сообщения</a>
+        <a href="{% url 'network:my_music' profile.id %}">Мои Аудиозаписи</a>
         <a href="{% url 'network:all_subscribers' profile.id %}"><h1>Друзья:</h1></a>
         {% for subscriber in subscribers %}
         <li>

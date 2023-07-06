@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои Аудиозаписи</title>
+</head>
+<body>
+    <a href="{% url 'network:all_musics' %}">Рекомендации</a>
+    {% if not musics %}
+        <h1> У вас ещё нет аудиозаписией</h1>
+    {% else %}
+        <h1>Мои Аудиозаписи</h1>
+        {% for music in musics %}
+            <br>
+            <h3>{{music.sound.name}}</h3>
+                <audio controls     >
+                    <source src="{{music.sound.sound.url}}">
+                </audio>
+        <form action="{% url 'network:delete_music' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Удалить">
+            <input type="hidden" name="music_id" value="{{music.id}}">
+        </form>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

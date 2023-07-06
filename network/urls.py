@@ -27,4 +27,12 @@ urlpatterns = [
     path('add_comment/', views.add_comment, name='add_comment'),
     path('support/', views.support, name='support'),
     path('add_report/', views.add_report, name='add_report'),
+    path('add_like_picture/', views.add_like_picture, name='add_like_picture'),
+    path('add_like_comment', views.add_like_comment, name='add_like_comment'),
+    path('add_like_post', views.add_like_post, name='add_like_post'),
+    path('my_musics/<int:profile_id>/', views.my_music, name='my_music'),
+    path('all_musics/', views.all_musics, name='all_musics'),
+    path('add_music/', views.add_music, name='add_music'),
+    path('delete_music/', views.delete_music, name='delete_music'),
+    path('edit_information', views.edit_information, name='edit_information')
 ]

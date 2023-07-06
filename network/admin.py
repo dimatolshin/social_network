@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import Profile, Subscription, Chat, Message, Post, Photo, Comment, Support
+from .models import Profile, Subscription, Chat, Message, Post, Photo, Comment, Support, All_Music, My_Music
 
 
 class SubscriberInline(admin.TabularInline):
@@ -88,4 +88,14 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Support)
 class SupportAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(All_Music)
+class AllMusicAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(My_Music)
+class MyMusicAdmin(admin.ModelAdmin):
     pass

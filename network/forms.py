@@ -33,3 +33,11 @@ class AddPhoto(forms.ModelForm):
     class Meta:
         model = Photo
         fields = ("picture",)
+
+
+class EditParam(forms.ModelForm):
+    birth_date = forms.DateField(initial=timezone.now().date(), widget=forms.SelectDateWidget(years=range(1900, 2030)))
+    email = forms.EmailField()
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "email", "birth_date",)

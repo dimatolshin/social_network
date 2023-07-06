@@ -6,6 +6,12 @@
 </head>
 <body>
          <img src="{{photo.picture.url}}" width="450" height="450" >
+            <form action="{% url 'network:add_like_picture' %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Нравится"> : {{photo.like}}
+                    <input type="hidden" value="{{photo.id}}" name="photo_id">
+            </form>
+
             {% if not comments %}
                 <h1> Ещё нет комментарий, напишите, будьте первым </h1>
                  <form action="{% url 'network:add_comment'%}" method="post">
@@ -23,9 +29,12 @@
                     <input type="hidden" name="photo_id" value="{{photo.id}}">
                 </form>
                 {% for comment in comments %}
-                <li>
-                    {{comment.profile.user.username}}:{{comment.text}}
-                </li>
+                <br>{{comment.profile.user.username}}:{{comment.text}}
+                    <form action="{% url 'network:add_like_comment' %}" method="post">
+                        {% csrf_token %}
+                         <input type="submit" value="Нравится"> : {{comment.like}}
+                        <input type="hidden" value="{{comment.id}}" name="comment_id">
+                    </form>
                 {% endfor %}
 </body>     {% endif %}
 </html>

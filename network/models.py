@@ -69,9 +69,25 @@ class Comment(models.Model):
 
 class Support(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='support')
-    user_support = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support',blank=True)
+    user_support = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support', blank=True)
     text = models.TextField()
-    creation_user_username = models.CharField(max_length=100,blank=True)
+    creation_user_username = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f'{self.user_support.username} : {self.profile.user.username}'
+
+
+class All_Music(models.Model):
+    name = models.CharField(max_length=100)
+    sound = models.FileField(upload_to='music')
+
+    def __str__(self):
+        return self.name
+
+
+class My_Music(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='my_musics')
+    sound = models.ForeignKey(All_Music, on_delete=models.CASCADE, related_name='my_musics')
+
+    def __str__(self):
+        return f'{self.profile.user.username}:{self.sound.name}'

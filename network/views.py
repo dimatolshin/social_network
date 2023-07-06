@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import CreateNewUser, AddPhoto
-from .models import Profile, Subscription, Chat, Message, Post, Photo, Comment, Support
+from .forms import CreateNewUser, AddPhoto, EditParam
+from .models import Profile, Subscription, Chat, Message, Post, Photo, Comment, Support, My_Music, All_Music
 
 
 def index(request):
@@ -19,8 +19,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect('network:index')
+            messages.success(request, "Регистрация прошла успешно.")
+            return redirect('network:main', request.user.profile.id)
         messages.error(request, "Unsuccessful registration. Invalid information.")
     form = CreateNewUser()
     return render(request, "registration/register.html", context={'form': form})
@@ -93,18 +93,11 @@ def search_people(request):
 
 
 def search(request):
-    profiles = Profile.objects.all()
     username = request.POST['name_element']
+    profiles = Profile.objects.filter(user__username__icontains=username)
     if not username:
         return redirect('network:search_people')
-    all_people = []
-    user_container = User.objects.filter(username__icontains=username)
-    for user in user_container:
-        for profile in profiles:
-            if profile == user.profile:
-                print(profile)
-                all_people += [user.profile]
-    return render(request, 'network/search_people.html', {'all_people': all_people})
+    return render(request, 'network/search_people.html', {'all_people': profiles})
 
 
 def add_friend(request):
@@ -115,6 +108,7 @@ def add_friend(request):
         Subscription.objects.create(to_subscriber=request.user.profile, subscriber=profile)
     else:
         return redirect('network:main', profile_id)
+    messages.success(request, "Вы успешно добавили друга")
     return redirect('network:main', profile_id)
 
 
@@ -160,6 +154,7 @@ def dell_friend(request):
     subscriber = Subscription.objects.filter(to_subscriber=request.user.profile, subscriber=profile)
     subscriber.delete()
     request.user.profile.save()
+    messages.success(request, "Вы удалили своего друга")
     return redirect('network:main', profile_id)
 
 
@@ -211,7 +206,8 @@ def support(request):
     user_support = User.objects.get(username='Тех.Специалист')
     if not Support.objects.filter(profile=request.user.profile):
         supports = Support.objects.create(profile=request.user.profile, user_support=user_support,
-                                          text='Здравствуйте, чем могу помочь?',creation_user_username='Тех.Специалист')
+                                          text='Здравствуйте, чем могу помочь?',
+                                          creation_user_username='Тех.Специалист')
     supports = Support.objects.filter(profile=request.user.profile)
     return render(request, 'network/support.html', {'supports': supports})
 
@@ -221,5 +217,91 @@ def add_report(request):
     text = request.POST['text']
     if not text:
         return redirect('network:support')
-    Support.objects.create(profile=request.user.profile, text=text, user_support=user_support,creation_user_username=request.user.username)
+    Support.objects.create(profile=request.user.profile, text=text, user_support=user_support,
+                           creation_user_username=request.user.username)
     return redirect('network:support')
+
+
+def add_like_picture(request):
+    assert request.method == "POST"
+    photo_id = request.POST['photo_id']
+    photo = get_object_or_404(Photo, id=request.POST['photo_id'])
+    photo_like = request.session.get('photo_like', [])
+    if photo_id in photo_like:
+        photo_like.remove(photo_id)
+        photo.like -= 1
+    else:
+        photo_like.append(photo_id)
+        photo.like += 1
+    photo.save()
+    request.session['photo_like'] = photo_like
+    print(photo_like)
+    return redirect('network:detail_photo', photo_id)
+
+
+def add_like_comment(request):
+    assert request.method == "POST"
+    comment_id = request.POST['comment_id']
+    photo = Photo.objects.get(comments__id=comment_id)
+    comment = get_object_or_404(Comment, id=comment_id)
+    like_comment = request.session.get('like_comment', [])
+    if comment_id in like_comment:
+        like_comment.remove(comment_id)
+        comment.like -= 1
+    else:
+        like_comment.append(comment_id)
+        comment.like += 1
+    comment.save()
+    request.session['like_comment'] = like_comment
+    print(like_comment)
+    return redirect('network:detail_photo', photo.id)
+
+
+def add_like_post(request):
+    pass
+
+
+def my_music(request, profile_id: int):
+    profile = get_object_or_404(Profile, id=profile_id)
+    musics = My_Music.objects.filter(profile=profile)
+    print(musics)
+    return render(request, 'network/my_music.html', {'musics': musics})
+
+
+def all_musics(request):
+    musics = All_Music.objects.all()
+    return render(request, 'network/all_musics.html', {'musics': musics})
+
+
+def add_music(request):
+    sound = get_object_or_404(All_Music, id=request.POST['music_id'])
+    My_Music.objects.create(sound=sound, profile=request.user.profile)
+    messages.success(request, 'Аудио добавлено в ваши аудиозаписи')
+    return redirect('network:all_musics')
+
+
+def delete_music(request):
+    sound = My_Music.objects.filter(id=request.POST['music_id'])
+    sound.delete()
+    messages.success(request, 'Аудио было удалего из вашего плейлиста')
+    return redirect('network:my_music', request.user.profile.id)
+
+
+def edit_information(request):
+    if request.method == "POST":
+        form = EditParam(request.POST)
+        if form.is_valid():
+            profile = get_object_or_404(Profile, id=request.user.profile.id)
+            user = request.user
+            user.username = form.cleaned_data['username']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            profile.birth_date = form.cleaned_data['birth_date']
+            user.save()
+            profile.save()
+            messages.success(request, 'Вы успешно изменили информацию')
+            return redirect('network:main', profile.id)
+    else:
+        form = EditParam(instance=request.user)
+    return render(request, 'network/edit_information.html', {'form': form})

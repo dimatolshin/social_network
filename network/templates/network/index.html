@@ -8,12 +8,12 @@
       {% if user.is_authenticated %}
            <form action="{% url 'logout' %}?next={{request.path}}" method="post">
                {% csrf_token %}
-                <input type="submit" value="Logout &#10156;" class="btn btn-danger">
+                <input type="submit" value="Выйти &#10156;" class="btn btn-danger">
            </form>
           <a href="{% url 'network:main' user.profile.id %}">Войти в профель</a>
       {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'network:register' %}">Register</a>
+            <a href="{% url 'login' %}?next={{request.path}}">Войти в профиль</a>
+            <a href="{% url 'network:register' %}">Регистрация</a>
       {% endif %}
 
 </body>

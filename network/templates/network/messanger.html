@@ -2,23 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Мои сообщения</title>
 </head>
 <body>
       {% if friend_rooms or my_rooms %}
+      <h1>Диалоги </h1>
           {% for room in my_rooms %}
-            <li>
               <br><h4>{{room.friend.user.username}}</h4>
               <a href="{% url 'network:main' room.friend.id %}"> <img src=" {{room.friend.photo.url}}" width="70" height="70" ></a>
               <a href="{% url 'network:message_room' room.id %}"><h3>Ваш диалог</h3></a>
-            </li>
           {% endfor %}
           {% for room in friend_rooms %}
-            <li>
               <br><h4>{{room.friend.user.username}}</h4>
               <a href="{% url 'network:message_room' room.you.id %}"> <img src=" {{room.you.photo.url}}" width="70" height="70" >-{{room.you.user.username}}</a>
               <a href="{% url 'network:message_room' room.id %}"><h3>Ваш диалог</h3></a>
-            </li>
           {% endfor %}
         {% else %}
         <h1> Здесь нет сообщений! </h1>

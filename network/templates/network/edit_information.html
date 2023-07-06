@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменяем иноформацию о себе</title>
+</head>
+<body>
+    <form action="{% url 'network:edit_information'%}" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Применить">
+    </form>
+</body>
+</html>
