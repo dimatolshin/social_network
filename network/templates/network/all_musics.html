@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Аудиозаписи</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
 
         {% for music in musics %}
         <br>
         <h3>{{music.name}}</h3>
-            <audio controls     >
+            <audio controls>
                 <source src="{{music.sound.url}}">
             </audio>
         <form action="{% url 'network:add_music' %}" method="post">
@@ -18,5 +13,4 @@
             <input hidden="hidden" value="{{music.id}}" name="music_id">
         </form>
         {% endfor %}
-</body>
-</html>
+{% endblock %}

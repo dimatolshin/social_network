@@ -1,40 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-         <img src="{{photo.picture.url}}" width="450" height="450" >
+{% extends 'network/base.html' %}
+{% block body %}
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+         <img src="{{photo.picture.url}}" width="650" height="800" >
             <form action="{% url 'network:add_like_picture' %}" method="post">
                     {% csrf_token %}
-                    <input type="submit" value="Нравится"> : {{photo.like}}
+                    <input type="submit" value=&#10084; class="btn btn-outline-light text-dark"> : {{photo.like}}
                     <input type="hidden" value="{{photo.id}}" name="photo_id">
             </form>
-
-            {% if not comments %}
+            </div>
+             <div class="col-sm"> <h1> Комментарии:</h1>
+            {% if comments %}
+                <form action="{% url 'network:add_comment' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="comment_text" placeholder="Напишите комментраий">
+                     <input type="submit" value=&#9730; class="btn btn-outline-light text-dark" >
+                    <input type="hidden" name="photo_id" value="{{photo.id}}">
+                </form>
+                {% for comment in comments %}
+                  <div class="d-flex">
+                      <a href="{% url 'network:main' comment.profile.id %}"><img src="{{comment.profile.photo.url}}" class="me-3 rounded-circle" style="width: 60px; height: 60px;"></a>
+                        <div>
+                            <h5 class="fw-bold">
+                                {{comment.profile.user.username}}
+                            </h5>
+                            <p>{{comment.text}}</p>
+                        </div>
+                  </div>
+                    <form action="{% url 'network:add_like_comment' %}" method="post">
+                        {% csrf_token %}
+                         <input type="submit" value=&#10084; class="btn btn-outline-light text-dark" > : {{comment.like}}
+                        <input type="hidden" value="{{comment.id}}" name="comment_id">
+                    </form>
+                {% endfor %}
+            {% else %}
                 <h1> Ещё нет комментарий, напишите, будьте первым </h1>
                  <form action="{% url 'network:add_comment'%}" method="post">
                     {% csrf_token %}
                     <input type="text" name="comment_text" placeholder="Напишите комментраий">
-                     <input type="submit" value="Отправить" >
+                     <input type="submit" value=&#9730; class="btn btn-outline-light text-dark" >
                     <input hidden="hidden" name="photo_id" value="{{photo.id}}">
                  </form>
-            {% else %}
-                <h1> Комментарии:</h1>
-                <form action="{% url 'network:add_comment' %}" method="post">
-                    {% csrf_token %}
-                    <input type="text" name="comment_text" placeholder="Напишите комментраий">
-                     <input type="submit" value="Отправить" >
-                    <input type="hidden" name="photo_id" value="{{photo.id}}">
-                </form>
-                {% for comment in comments %}
-                <br>{{comment.profile.user.username}}:{{comment.text}}
-                    <form action="{% url 'network:add_like_comment' %}" method="post">
-                        {% csrf_token %}
-                         <input type="submit" value="Нравится"> : {{comment.like}}
-                        <input type="hidden" value="{{comment.id}}" name="comment_id">
-                    </form>
-                {% endfor %}
-</body>     {% endif %}
-</html>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+{% endblock  %}

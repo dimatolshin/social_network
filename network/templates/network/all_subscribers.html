@@ -1,25 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
     {% if not subscribers %}
-      <h1>Нет друзей </h1>
+      <h1 style="text-align:center">Нет друзей </h1>
     {% else %}
+        <br>
         <form action="{% url 'network:search_subscribers' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="name_subscriber" placeholder="Поиск друга(username)">
-            <input type="submit" value="Поиск">
+            <input type="text" name="name_subscriber" placeholder="Напишите username" class="form-control">
+            <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
             <input type="hidden" name="profile_id" value="{{profile.id}}">
         </form>
+        <br>
+        <div class="row">
         {% for subscriber in subscribers %}
-        <li>
-          <a href="{% url 'network:main' subscriber.subscriber.id %}"><img src="{{subscriber.subscriber.photo.url}}" width="90" height="90" >
-           {{subscriber.subscriber.user.username}}</a>
-        </li>
+            <div class="col-sm-3">
+                 <div class="d-flex">
+                     <a href="{% url 'network:main' subscriber.subscriber.id %}"><img src="{{subscriber.subscriber.photo.url}}"  width="150" height="150" class="rounded"></a>
+                        <div>
+                            <h5 class="fw-bold">
+                            &nbsp;&nbsp;{{subscriber.subscriber.user.username}}
+                            </h5>
+                        </div>
+                 </div>
+            </div>
         {% endfor %}
+        </div>
     {% endif %}
-</body>
-</html>
+{% endblock %}

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
+from django.conf import settings
 
 from .forms import CreateNewUser, AddPhoto, EditParam
 from .models import Profile, Subscription, Chat, Message, Post, Photo, Comment, Support, My_Music, All_Music
@@ -30,7 +31,7 @@ def main(request: HttpRequest, user_id: int):
     profile = get_object_or_404(Profile, id=user_id)
     subscribers = Subscription.objects.filter(to_subscriber=profile)[:5]
     to_subscribers = Subscription.objects.filter(subscriber=profile)[:5]
-    posts = Post.objects.filter(profile=profile)
+    posts = Post.objects.filter(profile=profile).order_by('-id')
     if user_id == request.user.profile.id:
         check_element = False
     else:
@@ -99,7 +100,7 @@ def search(request):
         return redirect('network:search_people')
     return render(request, 'network/search_people.html', {'all_people': profiles})
 
-
+@login_required()
 def add_friend(request):
     profile_id = request.POST.get('profile_id')
     profile = get_object_or_404(Profile, id=profile_id)
@@ -111,7 +112,7 @@ def add_friend(request):
     messages.success(request, "Вы успешно добавили друга")
     return redirect('network:main', profile_id)
 
-
+@login_required()
 def check_chat(request):
     profile_id = request.POST.get('profile_id')
     profile = get_object_or_404(Profile, id=profile_id)
@@ -125,19 +126,19 @@ def check_chat(request):
         chat_id = chat.id
     return redirect('network:message_room', chat_id)
 
-
+@login_required()
 def messanger(request):
     friend_rooms = Chat.objects.filter(friend=request.user.profile)
     my_rooms = Chat.objects.filter(you=request.user.profile)
     return render(request, 'network/messanger.html', {'my_rooms': my_rooms, 'friend_rooms': friend_rooms})
 
-
+@login_required()
 def message_room(request, chat_id: int):
     chat = get_object_or_404(Chat, id=chat_id)
-    messages = Message.objects.filter(chat=chat)
-    return render(request, 'network/my_messages.html', {'messages': messages, 'chat': chat})
+    mess = Message.objects.filter(chat=chat).order_by('-id')
+    return render(request, 'network/my_messages.html', {'mess': mess, 'chat': chat})
 
-
+@login_required()
 def add_message(request):
     text = request.POST['text']
     chat_id = request.POST['chat_id']
@@ -148,6 +149,13 @@ def add_message(request):
     return redirect('network:message_room', chat_id)
 
 
+def get_more_info(request):
+    chat_id = int(request.GET['chat_id'])
+    chat = get_object_or_404(Chat, id=request.GET[chat_id])
+    messages = Message.objects.filter(chat=chat).order_by('id')
+    return render(request, 'network/get_more_info.html', {'messages': messages, 'chat': chat})
+
+@login_required()
 def dell_friend(request):
     profile_id = request.POST.get('profile_id')
     profile = get_object_or_404(Profile, id=profile_id)
@@ -157,22 +165,22 @@ def dell_friend(request):
     messages.success(request, "Вы удалили своего друга")
     return redirect('network:main', profile_id)
 
-
+@login_required()
 def add_post(request):
     profile = get_object_or_404(Profile, id=request.POST['profile_id'])
     text = request.POST['post_text']
     if not text:
-        return redirect('network:main')
+        return redirect('network:main', profile.id)
     Post.objects.create(profile=profile, text=request.POST['post_text'])
-    return redirect('network:main', request.POST['profile_id'])
+    return redirect('network:main', profile.id)
 
 
 def all_photo(request, profile_id: int):
     profile = get_object_or_404(Profile, id=profile_id)
-    photos = Photo.objects.filter(profile=profile).order_by('id').reverse()
+    photos = Photo.objects.filter(profile=profile).order_by('-id')
     return render(request, 'network/all_photo.html', {'photos': photos, })
 
-
+@login_required()
 def add_photo(request):
     if request.method == "POST":
         form = AddPhoto(request.POST, request.FILES)
@@ -187,10 +195,10 @@ def add_photo(request):
 
 def detail_photo(request, photo_id: int):
     photo = get_object_or_404(Photo, id=photo_id)
-    comments = Comment.objects.filter(photo=photo)
+    comments = Comment.objects.filter(photo=photo).order_by('-id')
     return render(request, 'network/detail_photo.html', {'comments': comments, 'photo': photo})
 
-
+@login_required()
 def add_comment(request):
     if request.method == 'POST':
         text = request.POST['comment_text']
@@ -201,17 +209,17 @@ def add_comment(request):
     comments = Comment.objects.filter(photo=photo)
     return render(request, 'network/detail_photo.html', {'comments': comments, 'photo': photo})
 
-
+@login_required()
 def support(request):
     user_support = User.objects.get(username='Тех.Специалист')
     if not Support.objects.filter(profile=request.user.profile):
-        supports = Support.objects.create(profile=request.user.profile, user_support=user_support,
+        Support.objects.create(profile=request.user.profile, user_support=user_support,
                                           text='Здравствуйте, чем могу помочь?',
                                           creation_user_username='Тех.Специалист')
-    supports = Support.objects.filter(profile=request.user.profile)
+    supports = Support.objects.filter(profile=request.user.profile).order_by('-id')
     return render(request, 'network/support.html', {'supports': supports})
 
-
+@login_required()
 def add_report(request):
     user_support = User.objects.get(username='Тех.Специалист')
     text = request.POST['text']
@@ -221,72 +229,76 @@ def add_report(request):
                            creation_user_username=request.user.username)
     return redirect('network:support')
 
-
+@login_required()
 def add_like_picture(request):
     assert request.method == "POST"
     photo_id = request.POST['photo_id']
     photo = get_object_or_404(Photo, id=request.POST['photo_id'])
-    photo_like = request.session.get('photo_like', [])
-    if photo_id in photo_like:
-        photo_like.remove(photo_id)
+    if request.user.profile in photo.like_list.all():
+        photo.like_list.remove(request.user.profile)
         photo.like -= 1
     else:
-        photo_like.append(photo_id)
+        photo.like_list.add(request.user.profile)
         photo.like += 1
     photo.save()
-    request.session['photo_like'] = photo_like
-    print(photo_like)
     return redirect('network:detail_photo', photo_id)
 
-
+@login_required()
 def add_like_comment(request):
     assert request.method == "POST"
     comment_id = request.POST['comment_id']
     photo = Photo.objects.get(comments__id=comment_id)
     comment = get_object_or_404(Comment, id=comment_id)
-    like_comment = request.session.get('like_comment', [])
-    if comment_id in like_comment:
-        like_comment.remove(comment_id)
+    like_data = comment.like_list.all()
+    if request.user.profile in like_data:
+        comment.like_list.remove(request.user.profile)
         comment.like -= 1
     else:
-        like_comment.append(comment_id)
+        comment.like_list.add(request.user.profile)
         comment.like += 1
     comment.save()
-    request.session['like_comment'] = like_comment
-    print(like_comment)
     return redirect('network:detail_photo', photo.id)
 
-
+@login_required()
 def add_like_post(request):
-    pass
+    assert request.method == "POST"
+    post = get_object_or_404(Post, id=request.POST['post_id'])
+    if request.user.profile in post.like_list.all():
+        post.like_list.remove(request.user.profile)
+        post.like -= 1
+    else:
+        post.like_list.add(request.user.profile)
+        post.like += 1
+    post.save()
+    return redirect('network:main', request.user.profile.id)
 
 
 def my_music(request, profile_id: int):
     profile = get_object_or_404(Profile, id=profile_id)
-    musics = My_Music.objects.filter(profile=profile)
-    print(musics)
+    musics = My_Music.objects.filter(profile=profile).order_by('id')
+
     return render(request, 'network/my_music.html', {'musics': musics})
 
 
 def all_musics(request):
-    musics = All_Music.objects.all()
+    musics = All_Music.objects.all().order_by('id')
     return render(request, 'network/all_musics.html', {'musics': musics})
 
-
+@login_required()
 def add_music(request):
     sound = get_object_or_404(All_Music, id=request.POST['music_id'])
     My_Music.objects.create(sound=sound, profile=request.user.profile)
     messages.success(request, 'Аудио добавлено в ваши аудиозаписи')
     return redirect('network:all_musics')
 
-
+@login_required()
 def delete_music(request):
     sound = My_Music.objects.filter(id=request.POST['music_id'])
     sound.delete()
     messages.success(request, 'Аудио было удалего из вашего плейлиста')
     return redirect('network:my_music', request.user.profile.id)
 
-
+@login_required()
 def edit_information(request):
     if request.method == "POST":
         form = EditParam(request.POST)

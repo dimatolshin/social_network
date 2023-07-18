@@ -1,24 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Мои сообщения</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
       {% if friend_rooms or my_rooms %}
-      <h1>Диалоги </h1>
+      <h1 style="text-align:center">Диалоги </h1>
+            <ul class="list-group">
           {% for room in my_rooms %}
-              <br><h4>{{room.friend.user.username}}</h4>
-              <a href="{% url 'network:main' room.friend.id %}"> <img src=" {{room.friend.photo.url}}" width="70" height="70" ></a>
-              <a href="{% url 'network:message_room' room.id %}"><h3>Ваш диалог</h3></a>
+            <li class="list-group-item"><div class="d-flex">
+                <a href="{% url 'network:main' room.friend.id %}"> <img src=" {{room.friend.photo.url}}" class="me-3 rounded-circle" style="width: 60px; height: 60px;" ></a>
+                <div>
+                    <h5 class="fw-bold">
+                    {{room.friend.user.username}}
+                    </h5>
+                        <p><a href="{% url 'network:message_room' room.id %}">Ваш диалог</a></p>
+                </div>
+            </div></li>
+            <br>
           {% endfor %}
+            </ul>
+            <ul class="list-group">
           {% for room in friend_rooms %}
-              <br><h4>{{room.friend.user.username}}</h4>
-              <a href="{% url 'network:message_room' room.you.id %}"> <img src=" {{room.you.photo.url}}" width="70" height="70" >-{{room.you.user.username}}</a>
-              <a href="{% url 'network:message_room' room.id %}"><h3>Ваш диалог</h3></a>
+            <li class="list-group-item"><div class="d-flex">
+                <a href="{% url 'network:main' room.you.id %}"> <img src=" {{room.you.photo.url}}" class="me-3 rounded-circle" style="width: 60px; height: 60px;" ></a>
+                <div>
+                    <h5 class="fw-bold">
+                    {{room.you.user.username}}
+                    </h5>
+                    <p><a href="{% url 'network:message_room' room.id %}">Ваш диалог</a></p>
+                </div>
+            </div></li>
+            <br>
           {% endfor %}
+            </ul>
         {% else %}
         <h1> Здесь нет сообщений! </h1>
       {% endif %}
-</body>
-</html>
+{% endblock %}

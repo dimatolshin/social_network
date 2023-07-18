@@ -1,27 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
         {% if not all_people %}
-        <h1> Ничего не удалось найти по вашему запросу </h1>
+        <h1 style="text-align:center"> Ничего не удалось найти по вашему запросу </h1>
+        <br>
          <form action="{% url 'network:search' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="name_element">
-            <input type="submit" value="Искать">
+             <h1 style="font-family:verdana;color:Black;"><input type="text" name="name_element" placeholder="Напишите username" class="form-control"></h1>
+            <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
         </form>
         {% else %}
+        <br>
         <form action="{% url 'network:search' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="name_element">
-            <input type="submit" value="Искать">
+            <h1 style="font-family:verdana;color:Black;"><input type="text" name="name_element" placeholder="Напишите username" class="form-control"></h1>
+            <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
         </form>
+        <br>
+         <div class="row">
         {% for people in all_people %}
-        <a href="{% url 'network:main' people.id %}"><h3>{{people.user.username}}</h3>
-            <img src="{{people.photo.url}}" width="150" height="150" class="img-circle"></a>
+             <div class="col-sm-3">
+                 <div class="d-flex">
+                     <a href="{% url 'network:main' people.id %}"><img src="{{people.photo.url}}" width="150" height="150" class="rounded"></a>
+                     <div>
+                         <h5 class="fw-bold">
+                            &nbsp;&nbsp;{{people.user.username}}
+                         </h5>
+                     </div>
+                </div>
+             </div>
         {% endfor %}
+         </div>
         {% endif %}
-</body>
-</html>
+{% endblock %}

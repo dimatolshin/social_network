@@ -10,7 +10,6 @@
         <br>
       {% if  mess %}
         <table id="-appendHere" class="table table-striped table-condensed">
-            <div id=“messages-container”>
         {% for mes in mess %}
             <div class="d-flex">
                 <a href="{% url 'network:main' mes.author.id%}"><img src="{{mes.author.photo.url}}" class="me-3 rounded-circle" style="width: 60px; height: 60px;"></a>
@@ -26,12 +25,7 @@
             </div>
             <br>
         {% endfor %}
-            </div>
+        </table>
       {% else %}
             <h1> Нет Сообщений </h1>
       {% endif %}
-
-<script>
-  $(‘#messages-container’).load(‘network/get_more_info’);
-</script>
-{% endblock %}

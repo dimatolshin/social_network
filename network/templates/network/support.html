@@ -1,24 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-        {% for i in supports %}
-            {% if not i.profile.user.username == i.creation_user_username %}
-            <h1>Техническая поддержка:{{i.text}}</h1>
-            {% else %}
-                <h1>{{ i.profile.user.username }}:{{i.text}}</h1>
-            {% endif %}
-        {% endfor %}
+{% extends 'network/base.html' %}
+{% block body %}
+        <br>
         <form action="{% url 'network:add_report' %}" method="post">
             {% csrf_token %}
-
-            <input type="text" name="text" placeholder="Напишите что случилось">
-            <input type="submit" value="Отправить">
+            <input type="text" name="text" placeholder="Написать сообщение" class="form-control">
+            <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
         </form>
+        {% for i in supports %}
+        <br>
+        <ul class="list-group">
+            {% if not i.profile.user.username == i.creation_user_username %}
+            <li class="list-group-item"><h1>Техническая поддержка : {{i.text}}</h1></li>
+            {% else %}
+            <li class="list-group-item"><h1>{{ i.profile.user.username }} : {{i.text}}</h1></li>
+            {% endif %}
+        </ul>
+        {% endfor %}
 
-
-</body>
-</html>
+{% endblock %}

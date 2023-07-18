@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
     {% if not photos %}
-        <h1>В альбоме еще нет фотографий</h1>
+        <h1 style="text-align:center;">В альбоме еще нет фотографий</h1>
     {% else %}
-        <h1>Альбом</h1>
+        <h1 style="text-align:center;">Альбом</h1>
         {% for photo in photos %}
         <a href="{% url 'network:detail_photo' photo.id %}"><img src="{{photo.picture.url}}" width="450" height="450" ></a>
         {% endfor %}
     {% endif %}
-</body>
-</html>
+{% endblock %}

@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Мои Аудиозаписи</title>
-</head>
-<body>
-    <a href="{% url 'network:all_musics' %}">Рекомендации</a>
+{% extends 'network/base.html' %}
+{% block body %}
+    <div class="d-grid gap-3">
+        <button type="button" class="btn btn-primary btn-block"><a href="{% url 'network:all_musics' %}"><h5 style="color:White;">Рекомендации</h5></a></button>
+    </div>
     {% if not musics %}
-        <h1> У вас ещё нет аудиозаписией</h1>
+    <br>
+    <br>
+        <h1 style="text-align:center;"> У вас ещё нет аудиозаписией</h1>
     {% else %}
-        <h1>Мои Аудиозаписи</h1>
+    <br>
+    <br>
+        <h1 style="text-align:center;">Мои Аудиозаписи</h1>
         {% for music in musics %}
             <br>
             <h3>{{music.sound.name}}</h3>
@@ -23,5 +24,4 @@
         </form>
         {% endfor %}
     {% endif %}
-</body>
-</html>
+{% endblock %}

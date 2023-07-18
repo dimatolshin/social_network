@@ -1,5 +1,7 @@
 from django.urls import path
 
+from mysite import settings
+from django.conf.urls.static import static
 from . import views
 
 app_name = "network"
@@ -34,5 +36,9 @@ urlpatterns = [
     path('all_musics/', views.all_musics, name='all_musics'),
     path('add_music/', views.add_music, name='add_music'),
     path('delete_music/', views.delete_music, name='delete_music'),
-    path('edit_information', views.edit_information, name='edit_information')
+    path('edit_information', views.edit_information, name='edit_information'),
+    path('get_more_info', views.get_more_info, name='get_more_info'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

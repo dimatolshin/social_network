@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
        <form action="{% url 'network:add_photo'%}" method="post" enctype="multipart/form-data" >
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="apply">
+        <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
         <input type="hidden" value="{{user.profile.id}}" name="profile_id">
     </form>
-</body>
-</html>
+{% endblock %}

@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
     {% if not search_element %}
-        <h1> Нет друзей с таким 'username'</h1>
+        <br>
+        <h1 style="text-align:center"> Нет друзей с таким 'username'</h1>
     {% else %}
-         <h1>Вот что мне удалось найти по вашему запросу</h1>
+         <br>
+         <h1 style="text-align:center">Вот что мне удалось найти по вашему запросу</h1>
+         <br>
+        <div class="row">
         {%for i in search_element %}
-            <li>
-            <a href="{% url 'network:main' i.profile.id %}"><img src="{{i.profile.photo.url}}" width="90" height="90">
-                {{i.username}}</a>
-            </li>
+            <div class="col-sm-3">
+                 <div class="d-flex">
+                     <a href="{% url 'network:main' i.profile.id %}"><img src="{{i.profile.photo.url}}" width="150" height="150" class="rounded"></a>
+                        <div>
+                            <h5 class="fw-bold">
+                                {{i.username}}
+                            </h5>
+                        </div>
+                 </div>
+            </div>
         {% endfor %}
+        </div>
     {% endif %}
-</body>
-</html>
+{% endblock %}

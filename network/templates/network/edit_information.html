@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Изменяем иноформацию о себе</title>
-</head>
-<body>
+{% extends 'network/base.html' %}
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <h4  style="text-align:center">
     <form action="{% url 'network:edit_information'%}" method="post">
         {% csrf_token %}
         {{form.as_p}}
-        <input type="submit" value="Применить">
+        <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
     </form>
-</body>
-</html>
+    </h4>
+{% endblock %}

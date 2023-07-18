@@ -42,6 +42,7 @@ class Post(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post')
     text = models.TextField()
     data = models.DateField(default=now)
+    like_list = models.ManyToManyField(Profile, related_name='like_posts')
     like = models.IntegerField(default=0)
 
     def __str__(self):
@@ -50,7 +51,8 @@ class Post(models.Model):
 
 class Photo(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='photos')
-    picture = models.ImageField(upload_to='photos')
+    picture = models.ImageField(upload_to='photo')
+    like_list = models.ManyToManyField(Profile, related_name='like_photos')
     like = models.IntegerField(default=0)
 
     def __str__(self):
@@ -61,6 +63,7 @@ class Comment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
+    like_list = models.ManyToManyField(Profile, related_name='like_comments')
     like = models.IntegerField(default=0)
 
     def __str__(self):

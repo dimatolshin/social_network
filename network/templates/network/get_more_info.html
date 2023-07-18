@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        {% for mes in mess %}
+            <div class="d-flex">
+                <a href="{% url 'network:main' mes.author.id%}"><img src="{{mes.author.photo.url}}" class="me-3 rounded-circle" style="width: 60px; height: 60px;"></a>
+                <div>
+                    <h5 class="fw-bold">
+                        {{mes.author.user.username}}
+                         <small class="text-muted">{{mes.date}}</small>
+                    </h5>
+                    <ul class="list-group">
+                        <li class="list-group-item"><p>{{mes.text}}</p></li>
+                    </ul>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+</body>
+</html>

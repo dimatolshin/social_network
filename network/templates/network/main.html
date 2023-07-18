@@ -1,79 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <title>Title</title>
-</head>
-<body>  {% if user.is_authenticated %}
-    <a href="{% url 'network:edit_information' %}">Редактировать информацию</a>
-    <a href="{% url 'network:search_people' %}">Найти друзей</a>
-    <a href="{% url 'network:support' %}">Связь с техподдержкой</a>
-    <h1>Профиль:</h1>
-    <a href="{% url 'network:all_photo' profile.id %}"> <img src="{{ profile.photo.url }}"   class="img-circle"  width="150" height="150"></a>
-    {% if not check_element %}
-    <a  href="{% url 'network:add_photo' %}" > Добавить фото</a>
-    {% endif %}
-    <li>{{profile.user.username}}</li>
-    <li>{{profile.user.first_name}}</li>
-    <li>{{profile.user.last_name}}</li>
-    <li>{{user.email}}</li>
-    <li>{{profile.birth_date}}</li>
+{% extends 'network/base.html' %}
+{% block body %}
+                <h1 style="text-align:left">Профиль:</h1>
+                <a href="{% url 'network:all_photo' profile.id %}"><img src="{{ profile.photo.url }}"   class="rounded-circle"  width="200" height="200"></a></div>
+                {% if not check_element %}
+                <br>
+                <button class="btn btn-primary">
+                   <span class="spinner-grow spinner-grow-sm"></span>
+                    <a  href="{% url 'network:add_photo' %}" ><h7 style="color:White;"> Добавить фото</h7></a>
+                </button>
+                {% endif %}
+                <br>
+                <br>
+            <h3>Информация:</h3>
+                <li>Никнейм : {{profile.user.username}}</li>
+                <li>Имя : {{profile.user.first_name}}</li>
+                <li>Фамилия : {{profile.user.last_name}}</li>
+                <li>Email : {{user.email}}</li>
+                <li>Дата рождения : {{profile.birth_date}}</li>
             {% if check_element %}
                 {% if not subscriber %}
         <form action="{% url 'network:add_friend' %}" method="post">
             {% csrf_token %}
-            <input type="submit" value="Добавить в друзья" >
+            <input type="submit" value="Добавить в друзья" class="btn btn-primary">
             <input type="hidden" value="{{profile.id}}" name="profile_id">
         </form>
                  {% else %}
             <form action="{% url 'network:dell_friend' %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Удалить друга">
+                <input type="submit" value="Удалить друга" class="btn btn-danger">
                 <input type="hidden" value="{{profile.id}}" name="profile_id">
             </form>
                  {% endif %}
         <form action="{% url 'network:check_chat' %}" method="post">
             {% csrf_token %}
-            <input type="submit" value="Написать сообщение">
+            <input type="submit" value="Написать сообщение" class="btn btn-outline-dark">
             <input type="hidden" value="{{profile.id}}" name="profile_id">
         </form>
-            {% else %}
+        <button type="button" class="btn btn-primary"><a href="{% url 'network:my_music' profile.id %}"><h6 style="color:White;">Музыка друга</h6></a></button>
+        <br>
+            {% endif %}
+                <br>
+                <a href="{% url 'network:all_subscribers' profile.id %}"><h1>Друзья:</h1></a>
+                {% for subscriber in subscribers %}
+                <li>
+                    <img src="{{subscriber.subscriber.photo.url}}" width="60" height="60" class="rounded-circle"><a href="{% url 'network:main' subscriber.subscriber.id  %}"> {{subscriber.subscriber.user.username}}</a>
+                </li>
+                {% endfor %}
+                <br>
+                <a href="{% url 'network:all_to_subscribers' profile.id %}"><h1>Подписчики:</h1></a>
+                    {% for to_subscriber in to_subscribers %}
+                    <li>
+                        <img src="{{to_subscriber.to_subscriber.photo.url}}" width="60" height="60" class="rounded-circle"><a href="{% url 'network:main' to_subscriber.to_subscriber.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
+                    </li>
+                {% endfor %}
+                <br>
+                <br>
+                {% if not check_element %}
+                    <h3 style="font-family:verdana;color:Black;"> Написать пост:</h3>
                 <form action="{% url 'network:add_post' %}" method="post">
                     {% csrf_token %}
-                    <input type="text" name="post_text" placeholder="Написать пост">
-                    <input type="submit" value="Опубликовать">
+                    <h3 style="font-family:verdana;color:Black;"><input type="text" name="post_text" placeholder="Написать пост" class="form-control"></h3>
+                    <input type="submit" value=&#9730; class="btn btn-outline-light text-dark">
                     <input type="hidden" name="profile_id" value="{{profile.id}}">
                 </form>
-            {% endif %}
+                {% endif %}
+                    <h2 style="text-align:center;color:Black;">Ваши посты:</h2>
                 {% for post in posts %}
-                    <li>
-                    {{post.text}}-{{post.data}}
-                    </li>
+                <div class="d-flex">
+                    <img src="{{post.profile.photo.url}}"  class="me-3 rounded-circle" style="width: 60px; height: 60px;">
+                    <div>
+                        <h5 class="fw-bold">
+                            {{post.profile.user.username}}
+                            <small class="text-muted">{{post.data}}</small>
+                        </h5>
+                        <p>{{post.text}}</p>
+                    </div>
+                </div>
                     <form action="{% url 'network:add_like_post' %}" method="post">
                         {% csrf_token %}
-                        <input type="submit" value="Нравится" > : {{post.like}}
+                        <input type="submit" value=&#10084; class="btn btn-outline-light text-dark"> : {{post.like}}
                         <input type="hidden" value="{{post.id}}" name="post_id">
                     </form>
                 {% endfor %}
-        <a href="{% url 'network:messanger' %}">Мои сообщения</a>
-        <a href="{% url 'network:my_music' profile.id %}">Мои Аудиозаписи</a>
-        <a href="{% url 'network:all_subscribers' profile.id %}"><h1>Друзья:</h1></a>
-        {% for subscriber in subscribers %}
-        <li>
-            <a href="{% url 'network:main' subscriber.subscriber.id  %}">{{subscriber.subscriber.user.username}}</a>
-        </li>
-        {% endfor %}
 
-        <a href="{% url 'network:all_to_subscribers' profile.id %}"><h1>Подписчики:</h1></a>
-            {% for to_subscriber in to_subscribers %}
-            <li>
-                <a href="{% url 'network:main' to_subscriber.to_subscriber.id %}">{{to_subscriber.to_subscriber.user.username}}</a>
-            </li>
-        {% endfor %}
-        {% endif %}
-</body>
-</html>
+
+{% endblock %}
