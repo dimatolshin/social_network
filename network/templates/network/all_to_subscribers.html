@@ -1,7 +1,7 @@
 {% extends 'network/base.html' %}
 {% block body %}
     {% if not to_subscribers %}
-        <h1  style="text-align:center">У вас нет подписчиков </h1>
+        <h1  style="text-align:center"> Нет подписчиков </h1>
     {% else %}
         <br>
         <form action="{% url 'network:search_to_subscribers' %}" method="post">
