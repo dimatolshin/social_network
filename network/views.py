@@ -318,4 +318,3 @@ def edit_information(request):
         form = EditParam(instance=request.user)
     return render(request, 'network/edit_information.html', {'form': form})
 
-'test'
