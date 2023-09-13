@@ -17,11 +17,13 @@
                 <audio controls     >
                     <source src="{{music.sound.sound.url}}">
                 </audio>
+            {% if user %}
         <form action="{% url 'network:delete_music' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="Удалить">
             <input type="hidden" name="music_id" value="{{music.id}}">
         </form>
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endblock %}
